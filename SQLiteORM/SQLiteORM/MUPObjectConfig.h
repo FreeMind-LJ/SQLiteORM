@@ -27,7 +27,7 @@
 + (NSArray *)primaryKeys;
 
 /**
- *  设置主键是否自动增长，默认为自动增长
+ *  设置主键是否自动增长，默认为非自动增长
  *
  */
 + (BOOL)AutoIncrement;

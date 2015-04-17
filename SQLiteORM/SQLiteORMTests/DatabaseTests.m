@@ -23,33 +23,33 @@
 /**
  *  添加数据
  */
--(void)testAddItems
-{
-    BOOL reselut = NO;
-    
-    Message *message = [Message new];
-    message.messageID = 9;
-    message.messageContent = @"this is test message 9";
-    reselut = [message save];
+    -(void)testAddItems
+    {
+        BOOL reselut = NO;
+        
+        Message *message = [Message new];
+        message.messageID = 9;
+        message.messageContent = @"this is test message 9";
+        reselut = [message save];
 
-    
-    Message *message1 = [Message new];
-    message1.messageID = 10;
-    message1.messageContent = @"this is test message 10";
-    reselut = [message1 save];
-    
-    Message *message2 = [Message new];
-    message2.messageID = 11;
-    message2.messageContent = @"this is test message 11";
-    reselut = [message2 save];
-    
-    //分表
-    Message *message3 = [Message new];
-    message3.messageID = 12;
-    message3.messageContent = @"this is test message 12";
-    message3.tableName = @"message12";
-    reselut = [message3 save];
-}
+        
+        Message *message1 = [Message new];
+        message1.messageID = 10;
+        message1.messageContent = @"this is test message 10";
+        reselut = [message1 save];
+        
+        Message *message2 = [Message new];
+        message2.messageID = 11;
+        message2.messageContent = @"this is test message 11";
+        reselut = [message2 save];
+        
+        //分表
+        Message *message3 = [Message new];
+        message3.messageID = 12;
+        message3.messageContent = @"this is test message 12";
+        message3.tableName = @"message12";
+        reselut = [message3 save];
+    }
 
 /**
  *  添加嵌套对象
@@ -118,24 +118,24 @@
 /**
  *  测试更新数据
  */
--(void)testUpdateObj
-{
-    BOOL ret = NO;
-    MUPResultSet *userSet = [User allObjects];
-    User *user = [userSet firstObject];
-    
-    NSDictionary *updateDic = @{@"userName":@"userNameUpdate",@"firstMessage.messageContent":@"firstMessageContent Changed",@"userDictionary.father":@"lujb"};
-    ret = [user patch:updateDic];
-    
-    userSet = [User allObjects];
-    User *userUpdate = [userSet firstObject];
+    -(void)testUpdateObj
+    {
+        BOOL ret = NO;
+        MUPResultSet *userSet = [User allObjects];
+        User *user = [userSet firstObject];
+        
+        NSDictionary *updateDic = @{@"userName":@"userNameUpdate",@"firstMessage.messageContent":@"firstMessageContent Changed",@"userDictionary.father":@"lujb"};
+        ret = [user patch:updateDic];
+        
+        userSet = [User allObjects];
+        User *userUpdate = [userSet firstObject];
 
-}
+    }
 
 /**
  *  测试orm切换
  */
--(void)testOrm
+-(void)testOrmChanged
 {
     BOOL ret = NO;
     MUPSQLiteORM *defaultOrm = [MUPSQLiteORM defaultORM];
@@ -163,7 +163,7 @@
 /**
  *  测试resultSet操作
  */
--(void)testQueryResultOperation
+-(void)testResultOperation
 {
     MUPResultSet *messageSet = [Message allObjects];
     

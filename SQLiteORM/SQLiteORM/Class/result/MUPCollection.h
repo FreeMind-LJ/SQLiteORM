@@ -15,8 +15,27 @@
 @property (nonatomic, readonly, assign) NSUInteger count;
 @property (nonatomic, readonly, copy) NSString *objectClassName;
 
+/**
+ *  获取索引所对应的对象
+ *
+ *  @param index 索引
+ *
+ *  @return 对象
+ */
 - (id)objectAtIndex:(NSUInteger)index;
+
+/**
+ *  获取第一个对象
+ *
+ *  @return object
+ */
 - (id)firstObject;
+
+/**
+ *  获取最后一个对象
+ *
+ *  @return object
+ */
 - (id)lastObject;
 
 /**

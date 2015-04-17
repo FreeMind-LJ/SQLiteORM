@@ -40,14 +40,14 @@
     +(NSArray*)primaryKeys{
         return @[@"userID"];
     }
-    //建立索引
+    //建立索引,create indices
     +(NSArray*)indices
     {
         return @[@"userName"];
     }
     @end
 
-###添加数据
+###添加对象,add obj
     -(void)testAddItems
     {
         BOOL reselut = NO;
@@ -76,7 +76,7 @@
         reselut = [message3 save];
     }
 
-###添加嵌套对象
+###添加嵌套对象,add obj
     -(void)testAddEmbedObj
     {
         BOOL reselut = NO;
@@ -103,27 +103,25 @@
       
         reselut = [[MUPSQLiteORM defaultORM] addOrUpdateObject:user1];
     }
-###删除对象
-  -(void)testDeleteObj
+###删除对象,delete obj
+    -(void)testDeleteObj
     {
         BOOL ret = NO;
         MUPResultSet *resultSet = [User allObjects];
         User *user1= [resultSet firstObject];
         ret =  [user1 remove];
     }
-###查找对象
+###查找对象,find object ,use nspredicate
     -(void)testFindObj
     {
         MUPResultSet *messageSet = [Message allObjects];
         NSArray *allMessage = messageSet.dataArray;
-        
-        
         NSPredicate *pred = [NSPredicate predicateWithFormat:@"messageID > %@",@(10)];
         MUPResultSet *filterSet =  (MUPResultSet*)[messageSet objectsWithPredicate:pred];
         NSArray *filterArray = filterSet.dataArray;
         
     }
-###更新对象
+###更新对象,update object
     -(void)testUpdateObj
     {
         BOOL ret = NO;
@@ -132,7 +130,7 @@
         NSDictionary *updateDic = @{@"userName":@"userNameUpdate",@"firstMessage.messageContent":@"firstMessageContent Changed",@"userDictionary.father":@"lujb"};
         ret = [user patch:updateDic];
     }
-###切换ORM
+###切换ORM,change orm
     -(void)testOrmChanged
     {
         BOOL ret = NO;
@@ -157,7 +155,7 @@
         ret = [message2 save];
     }
     
-###对结果集进行操作
+###对结果集进行操作,operaion on mupResultSet
     -(void)testResultOperation
     {
         MUPResultSet *messageSet = [Message allObjects];

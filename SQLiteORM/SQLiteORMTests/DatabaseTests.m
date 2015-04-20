@@ -23,33 +23,33 @@
 /**
  *  添加数据
  */
-    -(void)testAddItems
-    {
-        BOOL reselut = NO;
-        
-        Message *message = [Message new];
-        message.messageID = 9;
-        message.messageContent = @"this is test message 9";
-        reselut = [message save];
-
-        
-        Message *message1 = [Message new];
-        message1.messageID = 10;
-        message1.messageContent = @"this is test message 10";
-        reselut = [message1 save];
-        
-        Message *message2 = [Message new];
-        message2.messageID = 11;
-        message2.messageContent = @"this is test message 11";
-        reselut = [message2 save];
-        
-        //分表
-        Message *message3 = [Message new];
-        message3.messageID = 12;
-        message3.messageContent = @"this is test message 12";
-        message3.tableName = @"message12";
-        reselut = [message3 save];
-    }
+-(void)testAddItems
+{
+    BOOL reselut = NO;
+    
+    Message *message = [Message new];
+    message.messageID = 9;
+    message.messageContent = @"this is test message 9";
+    reselut = [message save];
+    
+    
+    Message *message1 = [Message new];
+    message1.messageID = 10;
+    message1.messageContent = @"this is test message 10";
+    reselut = [message1 save];
+    
+    Message *message2 = [Message new];
+    message2.messageID = 11;
+    message2.messageContent = @"this is test message 11";
+    reselut = [message2 save];
+    
+    //分表
+    Message *message3 = [Message new];
+    message3.messageID = 12;
+    message3.messageContent = @"this is test message 12";
+    message3.tableName = @"message12";
+    reselut = [message3 save];
+}
 
 /**
  *  添加嵌套对象
@@ -81,10 +81,46 @@
     user1.recentMessages = array;
     
     reselut = [[MUPSQLiteORM defaultORM] addOrUpdateObject:user1];
+}
+
+/**
+ *  测试查找对象
+ */
+-(void)testFindObj
+{
+    MUPResultSet *messageSet = [Message allObjects];
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"messageID > %@",@(10)];
+    MUPResultSet *filterSet =  (MUPResultSet*)[messageSet objectsWithPredicate:pred];
     
+    MUPResultSet *messageFind = [Message allObjectsWithPredicate:pred];
+    
+}
+
+/**
+ *  测试查找关联对象
+ */
+-(void)testFindEmbedObj
+{
     MUPResultSet *resultSet = [User allObjects];
-    
     User *userFind = [resultSet firstObject];
+    
+}
+
+/**
+ *  测试更新数据
+ */
+-(void)testUpdateObj
+{
+    BOOL ret = NO;
+    MUPResultSet *userSet = [User allObjects];
+    User *user = [userSet firstObject];
+    
+    NSDictionary *updateDic = @{@"userName":@"userNameUpdate",@"firstMessage.messageContent":@"firstMessageContent Changed",@"userDictionary.father":@"lujb"};
+    ret = [user patch:updateDic];
+    
+    userSet = [User allObjects];
+    User *userUpdate = [userSet firstObject];
+    
 }
 
 /**
@@ -94,48 +130,14 @@
 {
     BOOL ret = NO;
     MUPResultSet *resultSet = [User allObjects];
-    
     User *user1= [resultSet firstObject];
-    
-     ret =  [user1 remove];
+    ret =  [user1 remove];
 }
-
-/**
- *  测试查找对象
- */
--(void)testFindObj
-{
-    MUPResultSet *messageSet = [Message allObjects];
-    NSArray *allMessage = messageSet.dataArray;
-    
-    
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"messageID > %@",@(10)];
-    MUPResultSet *filterSet =  (MUPResultSet*)[messageSet objectsWithPredicate:pred];
-    NSArray *filterArray = filterSet.dataArray;
-    
-}
-
-/**
- *  测试更新数据
- */
-    -(void)testUpdateObj
-    {
-        BOOL ret = NO;
-        MUPResultSet *userSet = [User allObjects];
-        User *user = [userSet firstObject];
-        
-        NSDictionary *updateDic = @{@"userName":@"userNameUpdate",@"firstMessage.messageContent":@"firstMessageContent Changed",@"userDictionary.father":@"lujb"};
-        ret = [user patch:updateDic];
-        
-        userSet = [User allObjects];
-        User *userUpdate = [userSet firstObject];
-
-    }
 
 /**
  *  测试orm切换
  */
--(void)testOrmChanged
+-(void)testOrm
 {
     BOOL ret = NO;
     MUPSQLiteORM *defaultOrm = [MUPSQLiteORM defaultORM];
@@ -143,7 +145,7 @@
     
     path = defaultOrm.ormPath;
     
-    NSString *newPath = @"/Users/houxh/Library/Developer/CoreSimulator/Devices/07C486D5-01FD-4F25-9A69-6FE720C29A2E/data/Documents/newORM.sqlite";
+    NSString *newPath = @"/Users/lujb/Library/Developer/CoreSimulator/Devices/07C486D5-01FD-4F25-9A69-6FE720C29A2E/data/Documents/DataBase/newTest.db";
     
     MUPSQLiteORM *newOrm = [MUPSQLiteORM ormWithPath:newPath];
     
@@ -157,13 +159,20 @@
     message2.messageContent = @"this is test message 24";
     message2.MUPORM = newOrm;
     ret = [message2 save];
-
+    
+    Message *message3 = [Message new];
+    message3.messageID = 25;
+    message3.tableName = @"newTable";
+    message3.messageContent = @"this is test message 25";
+    message3.MUPORM = newOrm;
+    ret = [message3 save];
+    
 }
 
 /**
  *  测试resultSet操作
  */
--(void)testResultOperation
+-(void)testQueryResultOperation
 {
     MUPResultSet *messageSet = [Message allObjects];
     
@@ -171,6 +180,5 @@
     
     NSNumber *average = [messageSet averageOfProperty:@"messageID"];
 }
-
 
 @end

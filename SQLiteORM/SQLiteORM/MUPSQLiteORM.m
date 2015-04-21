@@ -192,6 +192,7 @@ static NSMutableDictionary *MUPORMDatabase;//存放路径对应的fmdatabasequeu
             if ( bRet ){
                 result = (NSUInteger)[queryResult unsignedLongLongIntForColumn:@"numrows"]>0?YES:NO;
             }
+            [queryResult close];
         }
 
     }];

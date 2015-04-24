@@ -92,6 +92,7 @@
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"messageID > %@",@(10)];
     MUPResultSet *filterSet =  (MUPResultSet*)[messageSet objectsWithPredicate:pred];
     
+    
     MUPResultSet *messageFind = [Message allObjectsWithPredicate:pred];
     
 }
@@ -145,7 +146,7 @@
     
     path = defaultOrm.ormPath;
     
-    NSString *newPath = @"/Users/lujb/Library/Developer/CoreSimulator/Devices/07C486D5-01FD-4F25-9A69-6FE720C29A2E/data/Documents/DataBase/newTest.db";
+    NSString *newPath = @"/Users/houxh/Library/Developer/CoreSimulator/Devices/07C486D5-01FD-4F25-9A69-6FE720C29A2E/data/Documents/DataBase/newTest.db";
     
     MUPSQLiteORM *newOrm = [MUPSQLiteORM ormWithPath:newPath];
     
@@ -179,6 +180,56 @@
     NSNumber *total = [messageSet sumOfProperty:@"messageID"];
     
     NSNumber *average = [messageSet averageOfProperty:@"messageID"];
+}
+
+//测试nspredicate转换sql
+-(void)testNSPredicateToSQL
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageID = %@", @11];
+    MUPResultSet *result = [Message allObjectsWithPredicate:predicate];
+    
+    
+}
+
+/**
+ *  测试in语句
+ */
+-(void)testInPredicate
+{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageID IN %@", @[@10,@11,@12]];
+    MUPResultSet *result = [Message allObjectsWithPredicate:predicate];
+}
+
+/**
+ *  测试predicate支持keypath子查询
+ */
+-(void)testKeyPathPredicate
+{
+//    for (int i=20;i<35;i++)
+//    {
+//        Message *message = [Message new];
+//        message.messageID = i;
+//        message.messageContent =[NSString stringWithFormat: @"this is test message %d",i ];
+//
+//
+//        User *user = [User new];
+//        user.userID = i;
+//        user.userName = [NSString stringWithFormat: @"user %d",i ];
+//        user.firstMessage = message;
+//        user.userDictionary = @{@"father":@"jhon peter",@"mother":@"taylor swift"};
+//        [[MUPSQLiteORM defaultORM] addOrUpdateObject:user];
+//    }
+//    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userID > %@ ", @23];
+    MUPResultSet *result = [User allObjectsWithPredicate:predicate];
+    
+    predicate = [NSPredicate predicateWithFormat:@"firstMessage.messageID in %@ and firstMessage.messageID IN %@", @[@22,@23,@25],@[@23,@29,@30]];
+    result = [User allObjectsWithPredicate:predicate];
+    
+    predicate = [NSPredicate predicateWithFormat:@"firstMessage.messageID > %@ or userID IN %@", @30,@[@23,@29,@30]];
+    result = [User allObjectsWithPredicate:predicate];
+    
+    
 }
 
 @end

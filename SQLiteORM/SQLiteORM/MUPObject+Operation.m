@@ -3,7 +3,7 @@
 //  MUPSQLiteORM
 //
 //  Created by lujb on 15/3/18.
-//  Copyright (c) 2015年 lujb. All rights reserved.
+//  Copyright (c) 2015年 ND. All rights reserved.
 //
 
 #import "MUPObject+Operation.h"
@@ -11,6 +11,7 @@
 #import "MUPObject+mapProperty.h"
 #import "MUPPorperty.h"
 #import "MUPSQLiteORM.h"
+#import "NSPredicate+SQL.h"
 
 @implementation MUPObject (Operation)
 
@@ -29,16 +30,14 @@
 
 +(MUPResultSet*)allObjectsWithPredicate:(NSPredicate *)predicate
 {
-    MUPResultSet *result = [self allObjects];
-    result.dataArray = [result.dataArray filteredArrayUsingPredicate:predicate];
-    return result;
+    NSString *tableName = [[self class] tableName];
+    tableName = tableName?tableName:NSStringFromClass([self class]);
+    return [self findAllObjectsIntable:tableName orm:[MUPSQLiteORM defaultORM] predicate:predicate];
 }
 
 +(MUPResultSet*)allObjectsInTable:(NSString *)tableName WithPredicate:(NSPredicate *)predicate
 {
-    MUPResultSet *result = [self allObjectsInTable:tableName];
-    result.dataArray = [result.dataArray filteredArrayUsingPredicate:predicate];
-    return result;
+    return [self findAllObjectsIntable:tableName orm:[MUPSQLiteORM defaultORM] predicate:predicate];
 }
 
 +(MUPResultSet*)allObjectsInORM:(MUPSQLiteORM *)orm
@@ -55,16 +54,16 @@
 
 +(MUPResultSet*)allObjectsWhere:(NSString *)predicate
 {
-    NSPredicate *queryPredict = [NSPredicate predicateWithFormat:predicate];
-    MUPResultSet *result = [self allObjectsWithPredicate:queryPredict];
-    return result;
+    NSPredicate *queryPredicate = [NSPredicate predicateWithFormat:predicate];
+    NSString *tableName = [[self class] tableName];
+    tableName = tableName?tableName:NSStringFromClass([self class]);
+    return [self findAllObjectsIntable:tableName orm:[MUPSQLiteORM defaultORM] predicate:queryPredicate];
 }
 
 +(MUPResultSet*)allObjectsInTable:(NSString *)tableName Where:(NSString *)predicate
 {
-    MUPResultSet *result = [self allObjectsInTable:tableName];
-    result.dataArray = [result.dataArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:predicate]];
-    return result;
+    NSPredicate *queryPredicate = [NSPredicate predicateWithFormat:predicate];
+    return [self findAllObjectsIntable:tableName orm:[MUPSQLiteORM defaultORM] predicate:queryPredicate];
 }
 
 -(BOOL)save
@@ -135,7 +134,7 @@
         }
         
     }
-
+    
     result = [self pacthObjectFromDictionary:dictonary];
     return result;
 }
@@ -151,10 +150,45 @@
 
 #pragma mark -- operation internal
 
++(MUPResultSet*)findAllObjectsIntable:(NSString*)tableName orm:(MUPSQLiteORM*)orm predicate:(NSPredicate*)predicate
+{
+    NSArray *queryArguments = nil;
+    BOOL shouldBreakRequest = NO;
+    NSString *whereSQL = [predicate translateToSQLWithValues:&queryArguments  shouldBreak:&shouldBreakRequest];
+    NSMutableString *sql = [NSMutableString stringWithString:[self assembleSelectSqlFromTable:tableName condition:nil allValues:nil]];
+    
+    [sql appendFormat:@" where %@",whereSQL];
+    NSMutableArray *resultArray = [NSMutableArray array];
+    FMResultSet *rs = [orm executeQuery:sql withArgumentsInArray:queryArguments];
+    while ([rs next]) {
+        NSDictionary *dict = [rs resultDictionary];
+        if (dict) {
+            MUPObject *mupObject = [self objectFromDictionary:dict];
+            [resultArray addObject:mupObject];
+            
+        }
+    }
+    [rs close];
+    
+    if ([predicate isKindOfClass:[NSCompoundPredicate class]]) {
+        //满足过滤条件，添加到数组中
+        NSArray *filter = [resultArray filteredArrayUsingPredicate:predicate];
+        resultArray = [NSMutableArray arrayWithArray:filter];
+    }
+    
+    MUPResultSet *resultSet = [MUPResultSet new];
+    resultSet.dataArray = resultArray;
+    return resultSet;
+}
+
++(MUPResultSet*)findAllObjectsIntable:(NSString*)tableName
+{
+    return [self findAllObjectsInOrm:[MUPSQLiteORM defaultORM] Intable:tableName];
+}
+
 +(MUPResultSet*)findAllObjectsInOrm:(MUPSQLiteORM*)orm Intable:(NSString*)tableName
 {
     NSMutableArray *resultArray = [NSMutableArray array];
-    
     NSString *sql = [self assembleSelectSqlFromTable:tableName condition:nil allValues:nil];
     FMResultSet *rs = [orm executeQuery:sql];
     while ([rs next]) {
@@ -169,12 +203,6 @@
     resultSet.dataArray = resultArray;
     return resultSet;
 }
-
-+(MUPResultSet*)findAllObjectsIntable:(NSString*)tableName
-{
-    return [self findAllObjectsInOrm:[MUPSQLiteORM defaultORM] Intable:tableName];
-}
-
 
 +(MUPResultSet*)findAllObjectsIntable:(NSString*)tableName condition:(NSDictionary*)condition
 {
@@ -196,6 +224,13 @@
     return resultSet;
 }
 
+/**
+ *  根据dictionary生成对应的object对象
+ *
+ *  @param dictionary 传入的dictionary
+ *
+ *  @return object对象
+ */
 +(MUPObject*)objectFromDictionary:(NSDictionary*)dictionary
 {
     MUPObject *mupObject = [self new];
@@ -211,14 +246,14 @@
                                                                 options:NSJSONReadingAllowFragments
                                                                   error:nil];
             [mupObject setValue:dic forKey:key];
-
+            
         }else if (type == MUPPorpertyTypeObject ) {
-        
+            
             id embedDicString = [dictionary valueForKey:key];
             if (embedDicString && !(embedDicString == [NSNull null])) {
                 NSDictionary *embedDic = [NSJSONSerialization JSONObjectWithData:[embedDicString dataUsingEncoding:NSASCIIStringEncoding]
-                                                                options:NSJSONReadingAllowFragments
-                                                                  error:nil];
+                                                                         options:NSJSONReadingAllowFragments
+                                                                           error:nil];
                 
                 NSString *className = [embedDic valueForKey:MUP_OBJ_CLASS_NAME];
                 Class embedClass = NSClassFromString(className);
@@ -241,17 +276,17 @@
             if (embedArrayString && !(embedArrayString == [NSNull null])) {
                 NSError *error;
                 NSDictionary *embedArrayDic = [NSJSONSerialization JSONObjectWithData:[embedArrayString dataUsingEncoding:NSASCIIStringEncoding]
-                                                                         options:NSJSONReadingAllowFragments
-                                                                           error:&error];
+                                                                              options:NSJSONReadingAllowFragments
+                                                                                error:&error];
                 id arrayDataString = [embedArrayDic objectForKey:MUP_OBJ_TYPE_DATA];
                 if ([[embedArrayDic objectForKey:MUP_OBJ_TYPE_NAME] isEqualToString:@"NON_MUPObject_Array"]) {
                     
                     if (arrayDataString && arrayDataString != [NSNull null]) {
                         NSArray *ArrayData = [NSJSONSerialization JSONObjectWithData:[arrayDataString dataUsingEncoding:NSASCIIStringEncoding]
-                                                                            options:NSJSONReadingAllowFragments
-                                                                              error:nil];
+                                                                             options:NSJSONReadingAllowFragments
+                                                                               error:nil];
                         
-                         [mupObject setValue:ArrayData forKey:key];
+                        [mupObject setValue:ArrayData forKey:key];
                     }
                 }else{
                     
@@ -273,7 +308,7 @@
                                 }
                             }
                             MUPResultSet *resultSet = [embedClass findAllObjectsIntable:tableName condition:conditionDic];
-                        
+                            
                             [objectArray addObjectsFromArray:resultSet.dataArray];
                         }
                         
@@ -281,9 +316,9 @@
                     }
                 }
                 
-
+                
             }
-
+            
             
         }else{
             [mupObject setValue:[dictionary valueForKey:key] forKey:key];
@@ -292,7 +327,13 @@
     return mupObject;
 }
 
-
+/**
+ *  根据传入的dictionary修改object对象
+ *
+ *  @param dictonary 传入的dictionary
+ *
+ *  @return 修改是否成功
+ */
 -(BOOL)pacthObjectFromDictionary:(NSDictionary*)dictonary
 {
     BOOL result = NO;
@@ -309,6 +350,7 @@
     result = [self.MUPORM executeUpdate:sql withArgumentsInArray:allValues ];
     return result;
 }
+
 #pragma mark -- assemble Sql
 
 +(NSString*)assembleSelectSqlFromTable:(NSString*)tableName condition:(NSDictionary*)condition allValues:(NSMutableArray*)allValues
@@ -342,7 +384,7 @@
     [sql appendFormat:@"update %@ set \n",tableName];
     NSString *key;
     NSObject *value;
-
+    
     for ( NSInteger i = 0; i < keyValues.allKeys.count; ++i )
     {
         if ( 0 != i )
@@ -373,7 +415,7 @@
             [sql appendString:@" = (?)"];
         }
     }
-
+    
     
     return sql;
 }

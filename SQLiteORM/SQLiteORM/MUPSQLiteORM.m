@@ -570,6 +570,7 @@ static NSMutableDictionary *MUPORMDatabase;//存放路径对应的fmdatabasequeu
     [self.database  inDatabase:^(FMDatabase *db) {
         result = [db executeQuery:sql withArgumentsInArray:arguments];
     }];
+    
     return result;
 }
 

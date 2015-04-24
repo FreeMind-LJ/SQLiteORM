@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6DDE23EE1AEA2A1100ED0E9D /* NSPredicate+SQL.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE23ED1AEA2A1100ED0E9D /* NSPredicate+SQL.m */; };
+		6DDE23EF1AEA2B3200ED0E9D /* NSPredicate+SQL.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE23ED1AEA2A1100ED0E9D /* NSPredicate+SQL.m */; };
 		6DEEF2151AE0D6780034ACFF /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DEEF2141AE0D6780034ACFF /* libsqlite3.dylib */; };
 		6DEEF2221AE0D68A0034ACFF /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DEEF2181AE0D68A0034ACFF /* FMDatabase.m */; };
 		6DEEF2231AE0D68A0034ACFF /* FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DEEF21A1AE0D68A0034ACFF /* FMDatabaseAdditions.m */; };
@@ -53,6 +55,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6DDE23EC1AEA2A1100ED0E9D /* NSPredicate+SQL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSPredicate+SQL.h"; sourceTree = "<group>"; };
+		6DDE23ED1AEA2A1100ED0E9D /* NSPredicate+SQL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSPredicate+SQL.m"; sourceTree = "<group>"; };
 		6DEEF1FA1AE0D5920034ACFF /* libSQLiteORM.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSQLiteORM.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DEEF2051AE0D5920034ACFF /* SQLiteORMTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SQLiteORMTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DEEF20B1AE0D5920034ACFF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -113,6 +117,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6DDE23EB1AEA2A1100ED0E9D /* utilities */ = {
+			isa = PBXGroup;
+			children = (
+				6DDE23EC1AEA2A1100ED0E9D /* NSPredicate+SQL.h */,
+				6DDE23ED1AEA2A1100ED0E9D /* NSPredicate+SQL.m */,
+			);
+			path = utilities;
+			sourceTree = "<group>";
+		};
 		6DEEF1F11AE0D5920034ACFF = {
 			isa = PBXGroup;
 			children = (
@@ -191,6 +204,7 @@
 		6DEEF2281AE0D6EC0034ACFF /* Class */ = {
 			isa = PBXGroup;
 			children = (
+				6DDE23EB1AEA2A1100ED0E9D /* utilities */,
 				6DEEF2301AE0D6EC0034ACFF /* result */,
 				6DEEF2291AE0D6EC0034ACFF /* model_operation */,
 			);
@@ -317,6 +331,7 @@
 				6DEEF23B1AE0D6EC0034ACFF /* MUPObject+BuildTable.m in Sources */,
 				6DEEF2221AE0D68A0034ACFF /* FMDatabase.m in Sources */,
 				6DEEF2231AE0D68A0034ACFF /* FMDatabaseAdditions.m in Sources */,
+				6DDE23EE1AEA2A1100ED0E9D /* NSPredicate+SQL.m in Sources */,
 				6DEEF23E1AE0D6EC0034ACFF /* MUPResultSet.m in Sources */,
 				6DEEF23D1AE0D6EC0034ACFF /* MUPPorperty.m in Sources */,
 				6DEEF23F1AE0D6EC0034ACFF /* MUPObject.m in Sources */,
@@ -332,6 +347,7 @@
 				6DEEF2CB1AE0E62C0034ACFF /* MUPObject+Operation.m in Sources */,
 				6DEEF2471AE0D7260034ACFF /* DatabaseTests.m in Sources */,
 				6DEEF2C81AE0E4C60034ACFF /* MUPObject+mapProperty.m in Sources */,
+				6DDE23EF1AEA2B3200ED0E9D /* NSPredicate+SQL.m in Sources */,
 				6DEEF2481AE0D7260034ACFF /* Message.m in Sources */,
 				6DEEF2491AE0D7260034ACFF /* User.m in Sources */,
 			);
@@ -497,6 +513,7 @@
 				6DEEF2101AE0D5920034ACFF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6DEEF2111AE0D5920034ACFF /* Build configuration list for PBXNativeTarget "SQLiteORMTests" */ = {
 			isa = XCConfigurationList;
@@ -505,6 +522,7 @@
 				6DEEF2131AE0D5920034ACFF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

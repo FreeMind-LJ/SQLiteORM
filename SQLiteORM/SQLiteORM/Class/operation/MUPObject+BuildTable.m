@@ -27,8 +27,8 @@ static NSMutableDictionary *tableBuilt;
 {
     BOOL isBulit = NO;
     [self lockProgress];
-    NSString *ormPath = [tableBuilt objectForKey:tableName];
-    if ([ormPath isEqualToString:orm.ormPath]) {
+    NSArray *ormPathArray = [tableBuilt objectForKey:tableName];
+    if ([ormPathArray containsObject:orm.ormPath]) {
         isBulit = YES;
     }
     [self unlockProgress];
@@ -55,8 +55,17 @@ static NSMutableDictionary *tableBuilt;
         if (!tableBuilt) {
             tableBuilt = [NSMutableDictionary dictionary];
         }
-        [tableBuilt setObject:orm.ormPath forKey:tableName];//标记表是否已建立
+        NSArray *array = [tableBuilt objectForKey:tableName];
+        if (!array) {
+            array = @[orm.ormPath];
+        }else{
+            NSMutableArray *mutableArray = [NSMutableArray arrayWithArray:array];
+            [mutableArray addObject:orm.ormPath];
+            array = mutableArray;
+        }
+        [tableBuilt setObject:array forKey:tableName];//标记表是否已建立
         [self unlockProgress];
+
         //    创建索引
         NSArray *index = [self indices];
         if (index) {

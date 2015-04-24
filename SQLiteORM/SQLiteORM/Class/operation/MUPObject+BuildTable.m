@@ -27,9 +27,13 @@ static NSMutableDictionary *tableBuilt;
 {
     BOOL isBulit = NO;
     [self lockProgress];
-    isBulit = [[tableBuilt objectForKey:tableName] boolValue];
+    NSString *ormPath = [tableBuilt objectForKey:tableName];
+    if ([ormPath isEqualToString:orm.ormPath]) {
+        isBulit = YES;
+    }
     [self unlockProgress];
     return isBulit;
+
 }
 
 +(void)buildTableForTableName:(NSString *)tableName
@@ -45,12 +49,20 @@ static NSMutableDictionary *tableBuilt;
     [self mapRelation];
     
     NSString * CreateSql = [self assembleCreateTable:tableName];
-    [orm executeUpdate:CreateSql ];
-    //    创建索引
-    NSArray *index = [self indices];
-    if (index) {
-        NSString *indexSql = [self assembleCreateIndex:tableName index:index];
-        [orm executeUpdate:indexSql];
+    BOOL ret = [orm executeUpdate:CreateSql];
+    if (ret) {
+        [self lockProgress];
+        if (!tableBuilt) {
+            tableBuilt = [NSMutableDictionary dictionary];
+        }
+        [tableBuilt setObject:orm.ormPath forKey:tableName];//标记表是否已建立
+        [self unlockProgress];
+        //    创建索引
+        NSArray *index = [self indices];
+        if (index) {
+            NSString *indexSql = [self assembleCreateIndex:tableName index:index];
+            [orm executeUpdate:indexSql];
+        }
     }
 }
 

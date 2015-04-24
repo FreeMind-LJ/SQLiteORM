@@ -162,3 +162,32 @@
         NSNumber *sum = [messageSet sumOfProperty:@"messageID"];
         NSNumber *average = [messageSet averageOfProperty:@"messageID"];
     }
+
+###  支持keypath子查询
+
+    -(void)testKeyPathPredicate
+    {
+    //    for (int i=20;i<35;i++)
+    //    {
+    //        Message *message = [Message new];
+    //        message.messageID = i;
+    //        message.messageContent =[NSString stringWithFormat: @"this is test message %d",i ];
+    //        
+    //        
+    //        User *user = [User new];
+    //        user.userID = i;
+    //        user.userName = [NSString stringWithFormat: @"user %d",i ];
+    //        user.firstMessage = message;
+    //        user.userDictionary = @{@"father":@"jhon peter",@"mother":@"taylor swift"};
+    //        [[MUPSQLiteORM defaultORM] addOrUpdateObject:user];
+    //    }
+    
+         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userID > %@ ", @23];
+         MUPResultSet *result = [User allObjectsWithPredicate:predicate];
+
+         predicate = [NSPredicate predicateWithFormat:@"firstMessage.messageID in %@ and firstMessage.messageID IN%@", @[@22,@23,@25],@[@23,@29,@30]];
+         result = [User allObjectsWithPredicate:predicate];
+    
+        predicate = [NSPredicate predicateWithFormat:@"firstMessage.messageID > %@ or userID IN %@",@30,@[@23,@29,@30]];
+        result = [User allObjectsWithPredicate:predicate];
+    }

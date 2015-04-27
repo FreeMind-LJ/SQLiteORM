@@ -95,6 +95,15 @@
  */
 -(BOOL)deleteObjects:(NSArray *)objectArray;
 
+/**
+ *  对象是否存在
+ *
+ *  @param object 查询的对象
+ *
+ *  @return 存在与否
+ */
+-(BOOL)existObject:(MUPObject*)object;
+
 #pragma mark -- use with sql
 
 /**

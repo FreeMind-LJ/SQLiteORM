@@ -161,6 +161,11 @@ static NSMutableDictionary *MUPORMDatabase;//存放路径对应的fmdatabasequeu
     return result;
 }
 
+-(BOOL)existObject:(MUPObject *)object
+{
+    return [self objectExist:object];
+}
+
 #pragma mark -- operation internal
 
 -(BOOL)objectExist:(MUPObject*)object

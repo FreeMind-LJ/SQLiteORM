@@ -148,6 +148,22 @@
     return value;
 }
 
+-(BOOL)exist
+{
+    NSString *tableName = self.tableName;
+    tableName = tableName?tableName:[[self class] tableName];
+    tableName = tableName?tableName:NSStringFromClass([self class]);
+    return [self existInTable:tableName];
+    
+}
+
+-(BOOL)existInTable:(NSString *)tableName
+{
+    self.tableName = tableName;
+    return [self.MUPORM existObject:self];
+}
+
+
 #pragma mark -- operation internal
 
 +(MUPResultSet*)findAllObjectsIntable:(NSString*)tableName orm:(MUPSQLiteORM*)orm predicate:(NSPredicate*)predicate

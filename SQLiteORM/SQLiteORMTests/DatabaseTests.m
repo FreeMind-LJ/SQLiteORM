@@ -228,7 +228,18 @@
     
     predicate = [NSPredicate predicateWithFormat:@"firstMessage.messageID > %@ or userID IN %@", @30,@[@23,@29,@30]];
     result = [User allObjectsWithPredicate:predicate];
+}
+
+/**
+ *  测试对象是否存在
+ */
+-(void)testExist
+{
+    Message *message = [Message new];
+    message.messageID = 72;
+    message.messageContent =[NSString stringWithFormat: @"this is test message %d",22 ];
     
+    BOOL ret = [message exist];
     
 }
 

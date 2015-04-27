@@ -30,7 +30,7 @@
  *  设置主键是否自动增长，默认为非自动增长
  *
  */
-+ (BOOL)AutoIncrement;
++ (BOOL)autoIncrement;
 
 /**
  *  设置忽略的属性，不存入数据库

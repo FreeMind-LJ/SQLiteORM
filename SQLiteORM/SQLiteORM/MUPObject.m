@@ -68,7 +68,7 @@ static NSLock *__Lock = nil;
 + (NSString *)primaryKey{
     return nil;
 }
-+ (BOOL)AutoIncrement{
++ (BOOL)autoIncrement{
     return FALSE;
 }
 + (NSArray *)ignoredProperties{

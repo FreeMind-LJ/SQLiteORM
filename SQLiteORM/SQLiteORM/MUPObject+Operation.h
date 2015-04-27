@@ -84,6 +84,23 @@
 -(BOOL)remove;
 
 /**
+ *  对象是否存在
+ *
+ *  @return 存在与否
+ */
+-(BOOL)exist;
+
+/**
+ *  对象在表中是否存在
+ *
+ *  @param tableName 表名
+ *
+ *  @return 是在与否
+ */
+-(BOOL)existInTable:(NSString*)tableName;
+
+
+/**
  *  修改对象
  *
  *  @param patchProperties 修改对象的键值，嵌套对象采用点格式  embedobj.property 目前不支持数组的更新，数组更新请删除后保存

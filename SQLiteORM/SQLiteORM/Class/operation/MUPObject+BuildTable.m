@@ -113,7 +113,7 @@ static NSMutableDictionary *tableBuilt;
             if ([primaryKeyString isEqualToString:propertyName]) {
                 [sql appendString:@" PRIMARY KEY"];
             }
-            if ([self AutoIncrement]) {
+            if ([self autoIncrement]) {
                 [sql appendString:@" AUTOINCREMENT"];
             }
         }

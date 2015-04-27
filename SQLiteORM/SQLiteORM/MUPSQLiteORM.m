@@ -37,7 +37,7 @@ static NSMutableDictionary *MUPORMDatabase;//存放路径对应的fmdatabasequeu
     @synchronized(self){
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSMutableString *docDir = [NSMutableString stringWithString:[paths objectAtIndex:0]];
-        [docDir appendString:@"/DataBase"];
+        [docDir appendString:@"/com.DataBase.MUPSQLiteORM"];
         
         
         if (![[NSFileManager defaultManager] fileExistsAtPath:docDir]) {
@@ -164,6 +164,25 @@ static NSMutableDictionary *MUPORMDatabase;//存放路径对应的fmdatabasequeu
 -(BOOL)existObject:(MUPObject *)object
 {
     return [self objectExist:object];
+}
+
+-(void)inTransaction:(void (^)(MUPSQLiteORM *orm, BOOL *shouldRollback))block
+{
+    BOOL rollback = NO;
+    //begin transigion
+    
+    [self executeUpdate:@"begin exclusive transaction"];
+    block(self, &rollback);
+    
+    if (rollback) {
+        //回滚
+        [self executeUpdate:@"rollback transaction"];
+    }
+    else {
+        //提交事务
+        [self executeUpdate:@"commit transaction"];
+    }
+    
 }
 
 #pragma mark -- operation internal

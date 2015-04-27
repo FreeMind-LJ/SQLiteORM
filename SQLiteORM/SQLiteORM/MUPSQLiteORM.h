@@ -145,4 +145,11 @@
  */
 -(BOOL)executeUpdate:(NSString*)sql withArgumentsInArray:(NSArray *)arguments;
 
+/**
+ *  事务操作
+ *
+ *  @param block 需要提交的事务block，shouldRollback:是否需要回滚，需要回滚是设置为yes
+ */
+-(void)inTransaction:(void (^)(MUPSQLiteORM *orm, BOOL *shouldRollback))block;
+
 @end

@@ -282,8 +282,12 @@
                     }
                 }
                 MUPResultSet *resultSet = [embedClass findAllObjectsIntable:tableName condition:conditionDic];
-                MUPObject *objectEmbed = resultSet.dataArray[0];
-                [mupObject setValue:objectEmbed forKey:key];
+                if(resultSet.dataArray.count>0){
+                    MUPObject *objectEmbed = resultSet.dataArray[0];
+                    [mupObject setValue:objectEmbed forKey:key];
+                }else{
+                    [mupObject setValue:nil forKey:key];
+                }
             }
             
         }else if (type == MUPPorpertyTypeArray ){

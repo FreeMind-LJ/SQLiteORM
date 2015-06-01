@@ -130,19 +130,24 @@ static NSMutableDictionary *MUPORMDatabase;//存放路径对应的fmdatabasequeu
 
 -(BOOL)addOrUpdateObjects:(NSArray *)objectArray
 {
-    BOOL result = FALSE;
+    __block BOOL result = FALSE;
     if (!objectArray || ![objectArray[0]  isKindOfClass:[MUPObject class]]) {
         return FALSE;
     }
-    for (MUPObject *object in objectArray) {
-        if ([self objectExist:object]) {
-            result = [self updateObject:object];
-        }else{
-            result = [self insertObject:object];
-        }
-    }
-    return result;
-}
+    [self inTransaction:^(MUPSQLiteORM *orm, BOOL *shouldRollback) {
+        for (MUPObject *object in objectArray) {
+            if ([orm objectExist:object]) {
+                result = [orm updateObject:object];
+            }else{
+                result = [orm insertObject:object];
+            }
+            if (!result) {
+                *shouldRollback = YES;
+                break;
+            }
+        };
+    }];
+    return result;}
 
 -(BOOL)deleteObject:(MUPObject *)object
 {
@@ -154,11 +159,20 @@ static NSMutableDictionary *MUPORMDatabase;//存放路径对应的fmdatabasequeu
 
 -(BOOL)deleteObjects:(NSArray *)objectArray
 {
-        BOOL result = FALSE;
-    for (MUPObject *object in objectArray) {
-        result = [self deleteObject:object];
-    }
+    __block BOOL result = FALSE;
+    
+    [self inTransaction:^(MUPSQLiteORM *orm, BOOL *shouldRollback) {
+        for (MUPObject *object in objectArray) {
+            result = [orm deleteObject:object];
+            if (!result) {
+                *shouldRollback = YES;
+                break;
+            }
+        };
+    }];
+    
     return result;
+
 }
 
 -(BOOL)existObject:(MUPObject *)object
